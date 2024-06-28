@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: Test Action
-      uses: tobozo/idf-builder@main
+      uses: tobozo/idf-builder@v1
       with:
         target_repo: user/esp-idf-project # github repository
         idf_version: v5.1 # esp-idf version, must match a tag listed at https://hub.docker.com/r/espressif/idf/tags
