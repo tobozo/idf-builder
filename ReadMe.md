@@ -1,5 +1,5 @@
 
-# ESP-IDF project builder
+# ESP IDF artifact builder
 
 Use `tobozo/idf-builder` github action to compile an esp-idf project.
 
