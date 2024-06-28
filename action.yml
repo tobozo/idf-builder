@@ -1,4 +1,4 @@
-name: IDF Build Project
+name: ESP IDF artifact builder
 description: "Saves compiled esp-idf project as an artifact"
 author: tobozo
 branding:
