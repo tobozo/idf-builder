@@ -1,0 +1,69 @@
+name: IDF Build Project
+description: "Saves compiled esp-idf project as an artifact"
+author: tobozo
+branding:
+  icon: 'aperture'
+  color: 'black'
+
+on:
+  push:
+    paths:
+    - '**.ino'
+    - '**.cpp'
+    - '**.hpp'
+    - '**.h'
+    - '**.c'
+    - '**.yml'
+    - 'CMakeLists.txt'
+  pull_request:
+  workflow_dispatch:
+
+inputs:
+
+  target_repo:
+    description: "Target repo [author/repo-name]" # source project
+    required: true
+
+  idf_version:
+    description: "IDF Docker image version"
+    default: "v5.1" # idf version, must match a tag listed at https://hub.docker.com/r/espressif/idf/tags
+
+  idf_target_chip:
+    description: "Target chip"
+    default: "esp32" # esp32 / esp32s2 / esp32s3 / etc
+
+  merged_bin:
+    description: "Merged binary file name"
+    default: "merged.bin" # will be saved as an artifact
+
+  artifact_name:
+    description: "Artifact name"
+    default: "merged-bin"
+
+runs:
+  using: "composite"
+
+  steps:
+
+  - name: Checkout repo
+    uses: actions/checkout@v4
+    with:
+      submodules: 'recursive'
+      repository: ${{inputs.target_repo}}
+      path: application
+
+  - name: esp-idf build
+    uses: espressif/esp-idf-ci-action@v1
+    with:
+      esp_idf_version: ${{inputs.idf_version}}
+      target: ${{inputs.idf_target_chip}}
+      path: application
+      command: idf.py build && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
+
+  - name: "Artifact upload"
+    uses: actions/upload-artifact@v4
+    with:
+      name: ${{inputs.artifact_name}}
+      path: application/${{inputs.MERGED_BIN}}
+
+

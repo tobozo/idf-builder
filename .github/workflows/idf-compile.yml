@@ -1,0 +1,25 @@
+name: IDFBuild
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Test Action
+      uses: tobozo/idf-builder@main
+      with:
+        target_repo: martinberlin/lv_port_esp32-epaper
+        idf_version: v5.1
+        idf_target_chip: esp32s3
+        # merged_bin: lv_port_esp32s3_merged.bin
+        # artifact_name: lv_port_esp32s3_merged_bin
+
+
+
