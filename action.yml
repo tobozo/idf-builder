@@ -71,7 +71,7 @@ runs:
       [[ ${{ inputs.idf_version }} =~ $rx_ver ]] || { echo "Bad idf_version" && exit 1; }
       [[ ${{ inputs.idf_target_chip }} =~ $rx_esp ]] || { echo "Bad idf_target_chip" && exit 1; }
       ls -la
-      [[ -d "${{ inputs.idf_project_folder }}" ]] || { echo "Bad idf_project_folder" && exit 1; }
+      [[ -d "application/${{ inputs.idf_project_folder }}" ]] || { echo "Bad idf_project_folder" && exit 1; }
       [[ "${{ inputs.merged_bin }}" = "`basename ${{ inputs.merged_bin }}`" ]] || { echo "Bad merged_bin" && exit 1; }
 
   - name: esp-idf build
