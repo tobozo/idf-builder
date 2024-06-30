@@ -24,6 +24,10 @@ inputs:
     description: "Target repo [author/repo-name]" # source project
     required: true
 
+  target_repo_ref:
+    description: "Target repo ref/branch"
+    default: ""
+
   idf_version:
     description: "IDF Docker image version"
     default: "v5.1" # idf version, must match a tag listed at https://hub.docker.com/r/espressif/idf/tags
@@ -31,6 +35,10 @@ inputs:
   idf_target_chip:
     description: "Target chip"
     default: "esp32" # esp32 / esp32s2 / esp32s3 / etc
+
+  idf_project_folder:
+    description: "Project folder" # relative to target_repo
+    default: "."
 
   merged_bin:
     description: "Merged binary file name"
@@ -50,7 +58,19 @@ runs:
     with:
       submodules: 'recursive'
       repository: ${{inputs.target_repo}}
+      ref: ${{inputs.target_repo_ref}}
       path: application
+
+  - name: Check inputs
+    run: |
+      rx_art='^([a-zA-Z0-9_.\-]+)$'
+      rx_ver='^v([0-9]+\.){0,2}(\*|[0-9]+)$'
+      rx_esp='^esp32([a-z0-9]{0,2})$'
+      [[ ${{ inputs.artifact_name }} =~ $rx_art ]] || { echo "Bad artifact_name" && exit 1; }
+      [[ ${{ inputs.idf_version }} =~ $rx_ver ]] || { echo "Bad idf_version" && exit 1; }
+      [[ ${{ inputs.idf_target_chip }} =~ $rx_esp ]] || { echo "Bad idf_target_chip" && exit 1; }
+      [[ -d "${{ inputs.idf_project_folder }}" ]] || { echo "Bad idf_project_folder" && exit 1; }
+      [[ "${{ inputs.merged_bin }}" = "`basename ${{ inputs.merged_bin }}`" ]] || { echo "Bad merged_bin" && exit 1; }
 
   - name: esp-idf build
     uses: espressif/esp-idf-ci-action@v1
@@ -58,7 +78,7 @@ runs:
       esp_idf_version: ${{inputs.idf_version}}
       target: ${{inputs.idf_target_chip}}
       path: application
-      command: idf.py build && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
+      command: cd ${{ inputs.idf_project_folder }} && idf.py build && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
 
   - name: "Artifact upload"
     uses: actions/upload-artifact@v4
