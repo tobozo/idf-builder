@@ -79,13 +79,13 @@ runs:
     with:
       esp_idf_version: ${{inputs.idf_version}}
       target: ${{inputs.idf_target_chip}}
-      path: application
-      command: cd ${{ inputs.idf_project_folder }} && idf.py build && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
+      path: application/${{ inputs.idf_project_folder }}
+      command: idf.py build && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
 
   - name: "Artifact upload"
     uses: actions/upload-artifact@v4
     with:
       name: ${{inputs.artifact_name}}
-      path: application/${{inputs.MERGED_BIN}}
+      path: application/${{ inputs.idf_project_folder }}/${{inputs.MERGED_BIN}}
 
 
