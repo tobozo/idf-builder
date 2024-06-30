@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Test Action
-      uses: tobozo/idf-builder@main
+      uses: tobozo/idf-builder@test
       with:
         target_repo: vroland/epdiy
         target_repo_ref: s3_color_implementation
