@@ -79,7 +79,7 @@ runs:
       esp_idf_version: ${{inputs.idf_version}}
       target: ${{inputs.idf_target_chip}}
       path: ${{ inputs.idf_project_folder }}
-      command: ls ../../ -la && idf.py build && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
+      command: ls ../../ -la && { idf.py build || { cat /app/tobozo/idf-builder/examples/touch-tma340/build/CMakeFiles/CMakeOutput.log && exit 1; } } && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
 
   - name: "Artifact upload"
     uses: actions/upload-artifact@v4
