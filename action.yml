@@ -59,7 +59,7 @@ runs:
       submodules: 'recursive'
       repository: ${{inputs.target_repo}}
       ref: ${{inputs.target_repo_ref}}
-      #path: application
+      path: application
 
   - name: Check inputs
     shell: bash
@@ -70,7 +70,7 @@ runs:
       [[ ${{ inputs.artifact_name }} =~ $rx_art ]] || { echo "Bad artifact_name" && exit 1; }
       [[ ${{ inputs.idf_version }} =~ $rx_ver ]] || { echo "Bad idf_version" && exit 1; }
       [[ ${{ inputs.idf_target_chip }} =~ $rx_esp ]] || { echo "Bad idf_target_chip" && exit 1; }
-      [[ -d "${{ inputs.idf_project_folder }}" ]] || { echo "Bad idf_project_folder" && exit 1; }
+      [[ -d "application/${{ inputs.idf_project_folder }}" ]] || { echo "Bad idf_project_folder" && exit 1; }
       [[ "${{ inputs.merged_bin }}" = "`basename ${{ inputs.merged_bin }}`" ]] || { echo "Bad merged_bin" && exit 1; }
 
   - name: esp-idf build
@@ -78,13 +78,13 @@ runs:
     with:
       esp_idf_version: ${{inputs.idf_version}}
       target: ${{inputs.idf_target_chip}}
-      path: ${{ inputs.idf_project_folder }}
+      path: application/${{ inputs.idf_project_folder }}
       command: ls ../../ -la && { idf.py build || { cat /app/tobozo/idf-builder/examples/touch-tma340/build/CMakeFiles/CMakeOutput.log && exit 1; } } && cd build && esptool.py --chip ${{inputs.idf_target_chip}} merge_bin -o ../${{inputs.merged_bin}} @flash_args
 
   - name: "Artifact upload"
     uses: actions/upload-artifact@v4
     with:
       name: ${{inputs.artifact_name}}
-      path: ${{ inputs.idf_project_folder }}/${{inputs.MERGED_BIN}}
+      path: application/${{ inputs.idf_project_folder }}/${{inputs.MERGED_BIN}}
 
 
