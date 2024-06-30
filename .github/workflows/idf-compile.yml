@@ -13,11 +13,9 @@ jobs:
 
     steps:
     - name: Test Action
-      uses: tobozo/idf-builder@test
+      uses: tobozo/idf-builder@main
       with:
-        target_repo: tobozo/epdiy
-        target_repo_ref: s3_color_implementation
-        idf_project_folder: examples/touch-tma340
+        target_repo: martinberlin/lv_port_esp32-epaper
         idf_version: v5.1
         idf_target_chip: esp32s3
         # merged_bin: lv_port_esp32s3_merged.bin
