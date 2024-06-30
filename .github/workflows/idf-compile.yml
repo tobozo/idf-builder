@@ -15,7 +15,7 @@ jobs:
     - name: Test Action
       uses: tobozo/idf-builder@test
       with:
-        target_repo: vroland/epdiy
+        target_repo: tobozo/epdiy
         target_repo_ref: s3_color_implementation
         idf_project_folder: examples/touch-tma340
         idf_version: v5.1
